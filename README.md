@@ -46,11 +46,11 @@ Aplikasi ini mendukung input keyboard penuh untuk produktivitas:
 
 ## 🛠️ Teknologi yang Digunakan
 
-- [HTML5](https://developer.mozilla.org/en-US/docs/Web/HTML).
-- [Tailwind CSS](https://tailwindcss.com/).
-- [JavaScript (ES6+)](https://developer.mozilla.org/en-US/docs/Web/JavaScript).
-- [FontAwesome](https://fontawesome.com/).
-- [Google Fonts](https://fonts.google.com/).
+- [HTML5](https://developer.mozilla.org/en-US/docs/Web/HTML)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [JavaScript (ES6+)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+- [FontAwesome](https://fontawesome.com/)
+- [Google Fonts](https://fonts.google.com/)
 
 ## 🎨 Kustomisasi Warna
 
