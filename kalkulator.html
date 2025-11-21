@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Neo-Brutalist Calculator</title>
+    <title>Kalkulator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -218,6 +218,7 @@
           >
             +
           </button>
+
           <button
             data-action="NEGATE"
             class="hard-shadow bg-white border-2 border-black text-black text-lg font-bold rounded-none"
@@ -250,7 +251,7 @@
           <div
             class="flex justify-between items-center p-4 bg-black text-[#ff90e8] border-b-4 border-black"
           >
-            <h3 class="font-bold text-xl tracking-tighter">HISTORY</h3>
+            <h3 class="font-bold text-xl tracking-tighter">RIWAYAT</h3>
             <button
               id="btn-close-history"
               class="text-[#ff90e8] hover:text-white border-2 border-[#ff90e8] px-2 py-1 rounded-none bg-black hover:bg-gray-800 transition font-bold"
@@ -267,99 +268,98 @@
               id="clear-history"
               class="hard-shadow w-full py-3 bg-red-500 text-white font-bold border-2 border-black text-sm hover:bg-red-600 uppercase tracking-widest"
             >
-              Clear Memory
+              Hapus Memori
             </button>
           </div>
         </div>
       </div>
     </div>
     <script>
-      class Calculator {
-        constructor(expressionDisplay, currentInputDisplay) {
-          this.expressionDisplay = expressionDisplay;
-          this.currentInputDisplay = currentInputDisplay;
-          this.historyListElement = document.getElementById("history-list");
-          this.memoryIndicator = document.getElementById("memory-indicator");
-          this.currentInput = "0";
-          this.expressionParts = [];
-          this.memory = 0;
-          this.history = [];
-          this.isResultDisplayed = false;
+      class Kalkulator {
+        constructor(tampilanEkspresi, tampilanInputSaatIni) {
+          this.tampilanEkspresi = tampilanEkspresi;
+          this.tampilanInputSaatIni = tampilanInputSaatIni;
+          this.elemenDaftarRiwayat = document.getElementById("history-list");
+          this.indikatorMemori = document.getElementById("memory-indicator");
+          this.inputSaatIni = "0";
+          this.bagianEkspresi = [];
+          this.memori = 0;
+          this.riwayat = [];
+          this.apakahHasilDitampilkan = false;
         }
 
-        getFormattedNumber(numStr) {
-          const num = parseFloat(numStr);
-          if (isNaN(num)) return "";
-          return num.toLocaleString("en-US", { maximumFractionDigits: 10 });
+        formatAngka(strAngka) {
+          const angka = parseFloat(strAngka);
+          if (isNaN(angka)) return "";
+          return angka.toLocaleString("id-ID", { maximumFractionDigits: 10 });
         }
 
-        updateDisplay() {
-          this.currentInputDisplay.innerText = this.getFormattedNumber(
-            this.currentInput
+        perbaruiTampilan() {
+          this.tampilanInputSaatIni.innerText = this.formatAngka(
+            this.inputSaatIni
           );
-          if (this.currentInput.endsWith("."))
-            this.currentInputDisplay.innerText += ".";
+          if (this.inputSaatIni.endsWith("."))
+            this.tampilanInputSaatIni.innerText += ".";
 
-          const visualExpression = this.expressionParts
-            .map((part) => {
-              if (part === "/") return "÷";
-              if (part === "*") return "×";
-              if (part === "-") return "−";
-              if (!isNaN(parseFloat(part)) && parseFloat(part) < 0)
-                return `(${this.getFormattedNumber(part)})`;
-              return this.getFormattedNumber(part) || part;
+          const visualEkspresi = this.bagianEkspresi
+            .map((bagian) => {
+              if (bagian === "/") return "÷";
+              if (bagian === "*") return "×";
+              if (bagian === "-") return "−";
+              if (!isNaN(parseFloat(bagian)) && parseFloat(bagian) < 0)
+                return `(${this.formatAngka(bagian)})`;
+              return this.formatAngka(bagian) || bagian;
             })
             .join(" ");
-          this.expressionDisplay.innerText = visualExpression;
+          this.tampilanEkspresi.innerText = visualEkspresi;
         }
 
-        appendNumber(number) {
-          if (this.isResultDisplayed) {
-            this.currentInput = "";
-            this.expressionParts = [];
-            this.isResultDisplayed = false;
+        tambahAngka(angka) {
+          if (this.apakahHasilDitampilkan) {
+            this.inputSaatIni = "";
+            this.bagianEkspresi = [];
+            this.apakahHasilDitampilkan = false;
           }
-          if (number === "." && this.currentInput.includes(".")) return;
-          if (this.currentInput === "0" && number !== ".")
-            this.currentInput = number.toString();
-          else if (this.currentInput === "-0" && number !== ".")
-            this.currentInput = "-" + number.toString();
+          if (angka === "." && this.inputSaatIni.includes(".")) return;
+          if (this.inputSaatIni === "0" && angka !== ".")
+            this.inputSaatIni = angka.toString();
+          else if (this.inputSaatIni === "-0" && angka !== ".")
+            this.inputSaatIni = "-" + angka.toString();
           else
-            this.currentInput =
-              this.currentInput.toString() + number.toString();
+            this.inputSaatIni = this.inputSaatIni.toString() + angka.toString();
         }
 
-        negate() {
-          if (this.isResultDisplayed) {
-            this.currentInput = (parseFloat(this.currentInput) * -1).toString();
-            this.isResultDisplayed = false;
-            this.expressionParts = [];
+        negasi() {
+          if (this.apakahHasilDitampilkan) {
+            this.inputSaatIni = (parseFloat(this.inputSaatIni) * -1).toString();
+            this.apakahHasilDitampilkan = false;
+            this.bagianEkspresi = [];
           } else {
-            if (this.currentInput === "0") return;
-            if (this.currentInput.startsWith("-"))
-              this.currentInput = this.currentInput.slice(1);
-            else this.currentInput = "-" + this.currentInput;
+            if (this.inputSaatIni === "0") return;
+            if (this.inputSaatIni.startsWith("-"))
+              this.inputSaatIni = this.inputSaatIni.slice(1);
+            else this.inputSaatIni = "-" + this.inputSaatIni;
           }
         }
 
-        chooseOperation(operation) {
-          if (this.isResultDisplayed) {
-            this.isResultDisplayed = false;
-            this.expressionParts = [];
+        pilihOperasi(operasi) {
+          if (this.apakahHasilDitampilkan) {
+            this.apakahHasilDitampilkan = false;
+            this.bagianEkspresi = [];
           }
-          this.expressionParts.push(this.currentInput);
-          let opSymbol = operation;
-          if (operation === "×") opSymbol = "*";
-          if (operation === "÷") opSymbol = "/";
-          if (operation === "−") opSymbol = "-";
-          this.expressionParts.push(opSymbol);
-          this.currentInput = "0";
-          this.updateDisplay();
+          this.bagianEkspresi.push(this.inputSaatIni);
+          let simbolOp = operasi;
+          if (operasi === "×") simbolOp = "*";
+          if (operasi === "÷") simbolOp = "/";
+          if (operasi === "−") simbolOp = "-";
+          this.bagianEkspresi.push(simbolOp);
+          this.inputSaatIni = "0";
+          this.perbaruiTampilan();
         }
 
-        compute() {
-          this.expressionParts.push(this.currentInput);
-          const fullExpressionVisual = this.expressionParts
+        hitung() {
+          this.bagianEkspresi.push(this.inputSaatIni);
+          const visualEkspresiLengkap = this.bagianEkspresi
             .map((p) => {
               if (p === "*") return "×";
               if (p === "/") return "÷";
@@ -367,212 +367,216 @@
               return p;
             })
             .join(" ");
-          const mathString = this.expressionParts.join(" ");
+          const stringMatematika = this.bagianEkspresi.join(" ");
 
           try {
-            const result = new Function("return " + mathString)();
-            if (!isFinite(result) || isNaN(result)) {
+            const hasil = new Function("return " + stringMatematika)();
+            if (!isFinite(hasil) || isNaN(hasil)) {
               alert("Error");
-              this.clear();
+              this.hapusSemua();
               return;
             }
-            this.addToHistory(fullExpressionVisual, result);
-            this.currentInput = result.toString();
-            this.expressionParts = [];
-            this.expressionDisplay.innerText = fullExpressionVisual + " =";
-            this.isResultDisplayed = true;
+            this.tambahRiwayat(visualEkspresiLengkap, hasil);
+            this.inputSaatIni = hasil.toString();
+            this.bagianEkspresi = [];
+            this.tampilanEkspresi.innerText = visualEkspresiLengkap + " =";
+            this.apakahHasilDitampilkan = true;
           } catch (e) {
-            this.clear();
+            this.hapusSemua();
           }
-          this.currentInputDisplay.innerText = this.getFormattedNumber(
-            this.currentInput
+          this.tampilanInputSaatIni.innerText = this.formatAngka(
+            this.inputSaatIni
           );
         }
 
-        clear() {
-          this.currentInput = "0";
-          this.expressionParts = [];
-          this.isResultDisplayed = false;
+        hapusSemua() {
+          this.inputSaatIni = "0";
+          this.bagianEkspresi = [];
+          this.apakahHasilDitampilkan = false;
         }
-        clearEntry() {
-          this.currentInput = "0";
+
+        hapusEntri() {
+          this.inputSaatIni = "0";
         }
-        delete() {
-          if (this.isResultDisplayed) return;
+
+        hapusKarakter() {
+          if (this.apakahHasilDitampilkan) return;
           if (
-            this.currentInput.length === 1 ||
-            (this.currentInput.length === 2 &&
-              this.currentInput.startsWith("-"))
+            this.inputSaatIni.length === 1 ||
+            (this.inputSaatIni.length === 2 &&
+              this.inputSaatIni.startsWith("-"))
           )
-            this.currentInput = "0";
-          else this.currentInput = this.currentInput.toString().slice(0, -1);
+            this.inputSaatIni = "0";
+          else this.inputSaatIni = this.inputSaatIni.toString().slice(0, -1);
         }
 
-        addToHistory(expression, result) {
-          this.history.unshift({ expression, result });
-          if (this.history.length > 20) this.history.pop();
-          this.renderHistory();
+        tambahRiwayat(ekspresi, hasil) {
+          this.riwayat.unshift({ ekspresi, hasil });
+          if (this.riwayat.length > 20) this.riwayat.pop();
+          this.tampilkanRiwayat();
         }
 
-        renderHistory() {
-          this.historyListElement.innerHTML = "";
-          if (this.history.length === 0) {
-            this.historyListElement.innerHTML =
-              '<div class="text-black text-center mt-10 font-bold opacity-50">EMPTY_LOG</div>';
+        tampilkanRiwayat() {
+          this.elemenDaftarRiwayat.innerHTML = "";
+          if (this.riwayat.length === 0) {
+            this.elemenDaftarRiwayat.innerHTML =
+              '<div class="text-black text-center mt-10 font-bold opacity-50">LOG_KOSONG</div>';
             return;
           }
-          this.history.forEach((item) => {
+          this.riwayat.forEach((item) => {
             const div = document.createElement("div");
             div.className =
               "bg-white p-3 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all";
             div.innerHTML = `
                         <div class="text-xs text-gray-500 mb-1 text-right font-bold">${
-                          item.expression
+                          item.ekspresi
                         } =</div>
-                        <div class="text-xl font-bold text-black text-right">${this.getFormattedNumber(
-                          item.result
+                        <div class="text-xl font-bold text-black text-right">${this.formatAngka(
+                          item.hasil
                         )}</div>
                     `;
             div.onclick = () => {
-              this.currentInput = item.result.toString();
-              this.expressionParts = [];
-              this.isResultDisplayed = true;
-              this.updateDisplay();
-              closeHistoryView();
+              this.inputSaatIni = item.hasil.toString();
+              this.bagianEkspresi = [];
+              this.apakahHasilDitampilkan = true;
+              this.perbaruiTampilan();
+              tutupPanelRiwayat();
             };
-            this.historyListElement.appendChild(div);
+            this.elemenDaftarRiwayat.appendChild(div);
           });
         }
 
-        clearHistory() {
-          this.history = [];
-          this.renderHistory();
+        bersihkanRiwayat() {
+          this.riwayat = [];
+          this.tampilkanRiwayat();
         }
 
-        handleMemory(action) {
-          const current = parseFloat(this.currentInput);
-          if (isNaN(current)) return;
-          if (action === "MC") this.memory = 0;
-          else if (action === "M+") this.memory += current;
-          else if (action === "M-") this.memory -= current;
-          else if (action === "MR") {
-            this.currentInput = this.memory.toString();
-            this.isResultDisplayed = true;
+        kelolaMemori(aksi) {
+          const saatIni = parseFloat(this.inputSaatIni);
+          if (isNaN(saatIni)) return;
+          if (aksi === "MC") this.memori = 0;
+          else if (aksi === "M+") this.memori += saatIni;
+          else if (aksi === "M-") this.memori -= saatIni;
+          else if (aksi === "MR") {
+            this.inputSaatIni = this.memori.toString();
+            this.apakahHasilDitampilkan = true;
           }
 
-          if (this.memory !== 0) {
-            this.memoryIndicator.innerText = `MEM: ${this.getFormattedNumber(
-              this.memory
+          if (this.memori !== 0) {
+            this.indikatorMemori.innerText = `MEM: ${this.formatAngka(
+              this.memori
             )}`;
-            this.memoryIndicator.style.opacity = "1";
-            this.memoryIndicator.classList.add("text-[#00FF41]");
+            this.indikatorMemori.style.opacity = "1";
+            this.indikatorMemori.classList.add("text-[#00FF41]");
           } else {
-            this.memoryIndicator.innerText = "NO MEMORY";
-            this.memoryIndicator.style.opacity = "0.5";
-            this.memoryIndicator.classList.remove("text-[#00FF41]");
+            this.indikatorMemori.innerText = "NO MEMORY";
+            this.indikatorMemori.style.opacity = "0.5";
+            this.indikatorMemori.classList.remove("text-[#00FF41]");
           }
-          this.updateDisplay();
+          this.perbaruiTampilan();
         }
       }
 
-      const calc = new Calculator(
+      const kalkulator = new Kalkulator(
         document.getElementById("expression-display"),
         document.getElementById("current-input")
       );
 
       document.querySelectorAll("[data-number]").forEach((btn) =>
         btn.addEventListener("click", () => {
-          calc.appendNumber(btn.innerText);
-          calc.updateDisplay();
+          kalkulator.tambahAngka(btn.innerText);
+          kalkulator.perbaruiTampilan();
         })
       );
       document.querySelectorAll("[data-operation]").forEach((btn) =>
         btn.addEventListener("click", () => {
-          calc.chooseOperation(btn.innerText);
-          calc.updateDisplay();
+          kalkulator.pilihOperasi(btn.innerText);
+          kalkulator.perbaruiTampilan();
         })
       );
       document.querySelectorAll("[data-memory]").forEach((btn) =>
         btn.addEventListener("click", () => {
-          calc.handleMemory(btn.dataset.memory);
+          kalkulator.kelolaMemori(btn.dataset.memory);
         })
       );
       document
         .querySelector('[data-action="EQUALS"]')
-        .addEventListener("click", () => calc.compute());
+        .addEventListener("click", () => kalkulator.hitung());
       document
         .querySelector('[data-action="C"]')
         .addEventListener("click", () => {
-          calc.clear();
-          calc.updateDisplay();
+          kalkulator.hapusSemua();
+          kalkulator.perbaruiTampilan();
         });
       document
         .querySelector('[data-action="CE"]')
         .addEventListener("click", () => {
-          calc.clearEntry();
-          calc.updateDisplay();
+          kalkulator.hapusEntri();
+          kalkulator.perbaruiTampilan();
         });
       document
         .querySelector('[data-action="DELETE"]')
         .addEventListener("click", () => {
-          calc.delete();
-          calc.updateDisplay();
+          kalkulator.hapusKarakter();
+          kalkulator.perbaruiTampilan();
         });
       document
         .querySelector('[data-action="NEGATE"]')
         .addEventListener("click", () => {
-          calc.negate();
-          calc.updateDisplay();
+          kalkulator.negasi();
+          kalkulator.perbaruiTampilan();
         });
 
-      const historyView = document.getElementById("history-view");
-      function openHistoryView() {
-        historyView.classList.remove("history-hidden");
-        historyView.classList.add("history-visible");
+      const panelRiwayat = document.getElementById("history-view");
+
+      function bukaPanelRiwayat() {
+        panelRiwayat.classList.remove("history-hidden");
+        panelRiwayat.classList.add("history-visible");
       }
-      function closeHistoryView() {
-        historyView.classList.remove("history-visible");
-        historyView.classList.add("history-hidden");
+
+      function tutupPanelRiwayat() {
+        panelRiwayat.classList.remove("history-visible");
+        panelRiwayat.classList.add("history-hidden");
       }
 
       document
         .getElementById("btn-open-history")
-        .addEventListener("click", openHistoryView);
+        .addEventListener("click", bukaPanelRiwayat);
       document
         .getElementById("btn-close-history")
-        .addEventListener("click", closeHistoryView);
+        .addEventListener("click", tutupPanelRiwayat);
       document
         .getElementById("clear-history")
-        .addEventListener("click", () => calc.clearHistory());
+        .addEventListener("click", () => kalkulator.bersihkanRiwayat());
 
       document.addEventListener("keydown", (e) => {
         if ((e.key >= "0" && e.key <= "9") || e.key === ".") {
-          calc.appendNumber(e.key);
-          calc.updateDisplay();
+          kalkulator.tambahAngka(e.key);
+          kalkulator.perbaruiTampilan();
         }
         if (e.key === "=" || e.key === "Enter") {
           e.preventDefault();
-          calc.compute();
+          kalkulator.hitung();
         }
         if (e.key === "Backspace") {
-          calc.delete();
-          calc.updateDisplay();
+          kalkulator.hapusKarakter();
+          kalkulator.perbaruiTampilan();
         }
         if (e.key === "Escape") {
-          if (historyView.classList.contains("history-visible"))
-            closeHistoryView();
+          if (panelRiwayat.classList.contains("history-visible"))
+            tutupPanelRiwayat();
           else {
-            calc.clear();
-            calc.updateDisplay();
+            kalkulator.hapusSemua();
+            kalkulator.perbaruiTampilan();
           }
         }
         if (["+", "-", "*", "/"].includes(e.key)) {
-          const map = { "*": "×", "/": "÷", "-": "-" };
-          calc.chooseOperation(map[e.key] || e.key);
+          const peta = { "*": "×", "/": "÷", "-": "-" };
+          kalkulator.pilihOperasi(peta[e.key] || e.key);
         }
         if (e.key === "n" || e.key === "_") {
-          calc.negate();
-          calc.updateDisplay();
+          kalkulator.negasi();
+          kalkulator.perbaruiTampilan();
         }
       });
     </script>
