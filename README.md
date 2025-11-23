@@ -1,4 +1,4 @@
-# 🧮 Neo-Brutalist Calculator Web App
+# 🧮 Kalkulator
 
 Aplikasi Kalkulator berbasis web dengan desain antarmuka **Neo-Brutalism** yang unik, modern, dan responsif. Dibangun menggunakan HTML, Tailwind CSS, dan Vanilla JavaScript murni tanpa build tools yang rumit.
 
